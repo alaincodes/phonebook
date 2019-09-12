@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-mongoose.set("useFindAndModify", false);
-
 const url = process.env.DB_URL;
 
 console.log("connecting to", url);
+
+mongoose.set("useFindAndModify", false);
 
 mongoose
   .connect(url, { useNewUrlParser: true })

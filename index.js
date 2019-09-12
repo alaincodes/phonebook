@@ -32,10 +32,12 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-app.get("/api/persons", (req, res) => {
-  Person.find({}).then(persons => {
-    res.json(persons);
-  });
+app.get("/api/persons", (req, res, next) => {
+  Person.find({})
+    .then(persons => {
+      res.json(persons.map(person => person.toJSON()));
+    })
+    .catch(error => next(error));
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
@@ -47,9 +49,7 @@ app.get("/api/persons/:id", (req, res, next) => {
         res.status(204).end();
       }
     })
-    .catch(error => {
-      next(error);
-    });
+    .catch(error => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -67,7 +67,7 @@ app.put("/api/persons/:id", (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then(() => {
       res.status(204).end("204 No Content");
